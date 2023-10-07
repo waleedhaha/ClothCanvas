@@ -1,9 +1,13 @@
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import React from 'react';
 import wpbd from '../../../assets/wpbd.png';
 import { button1, transparentButton } from '../../common/button';
 
-const Welcome = () => {
+const Welcome = ({ navigation }) => {
+  const handleAlreadyHaveAccount = () => {
+    navigation.navigate('Login');
+  };
+
   return (
     <View style={styles.container}>
       <Image style={styles.wpbd} source={wpbd} />
@@ -17,20 +21,26 @@ const Welcome = () => {
         <Text style={[styles.sub1Head, { left: 128, top: 500, width: 307, height: 29 }]}>
           Professional stylist
         </Text>
-        <View style={[button1, styles.button]}>
+        <TouchableOpacity
+          onPress={handleAlreadyHaveAccount}
+          style={[transparentButton, styles.alreadyHaveAccountButton]}
+        >
+          <Text style={styles.buttonText}>Already have an account</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => navigation.navigate('SignUp')}
+          style={[button1, styles.button]}
+        >
           <Text style={{ color: '#FFFFFF', textAlign: 'center' }}>Get Started</Text>
-        </View>
-
-        <View style={[transparentButton, styles.alreadyHaveAccountButton]}>
-  <Text style={styles.buttonText}>Already have an account</Text>
-</View>
-
+        </TouchableOpacity>
       </View>
     </View>
   );
 };
 
 export default Welcome;
+
 
 const styles = StyleSheet.create({
   container: {

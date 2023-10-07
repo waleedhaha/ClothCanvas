@@ -1,51 +1,60 @@
 import React from 'react';
-import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, ScrollView, KeyboardAvoidingView } from 'react-native';
 import signupbd from '../../../assets/signupbd.png';
+import { useNavigation } from '@react-navigation/native';
 
 const SignUp = () => {
+  const navigation = useNavigation();
+
+  const handleAlreadyHaveAccount = () => {
+    navigation.navigate('Login');
+  };
+
   return (
-    <View style={styles.container}>
-      <Image style={styles.backgroundImage} source={signupbd} />
-      <View style={styles.overlay}>
-        <Text style={styles.head}>Sign Up</Text>
-        <View style={styles.formGroup}>
-          <Text style={styles.label}>Email</Text>
-          <TextInput style={styles.input} placeholder="Enter your Email" />
-        </View>
-        <View style={styles.formGroup}>
-          <Text style={styles.label}>Username</Text>
-          <TextInput style={styles.input} placeholder="Enter your username" />
-        </View>
-        <View style={styles.formGroup}>
-          <Text style={styles.label}>Password</Text>
-          <TextInput style={styles.input} placeholder="Enter your password" secureTextEntry />
-        </View>
-        <View style={styles.formGroup}>
-          <Text style={styles.label}>Confirm Password</Text>
-          <TextInput style={styles.input} placeholder="Confirm your password" secureTextEntry />
-        </View>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.signUpButton}>
-            <Text style={styles.signUpButtonText}>Sign Up</Text>
+    <KeyboardAvoidingView style={styles.container} behavior="padding">
+      <ScrollView contentContainerStyle={styles.scrollViewContent}>
+        <Image style={styles.backgroundImage} source={signupbd} />
+        <View style={styles.overlay}>
+          <Text style={styles.head}>Sign Up</Text>
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Email</Text>
+            <TextInput style={styles.input} placeholder="Enter your Email" />
+          </View>
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Username</Text>
+            <TextInput style={styles.input} placeholder="Enter your username" />
+          </View>
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Password</Text>
+            <TextInput style={styles.input} placeholder="Enter your password" secureTextEntry />
+          </View>
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Confirm Password</Text>
+            <TextInput style={styles.input} placeholder="Confirm your password" secureTextEntry />
+          </View>
+          <TouchableOpacity onPress={handleAlreadyHaveAccount} style={styles.alreadyHaveAccountButton}>
+            <Text style={styles.buttonText}>Already have an account?</Text>
           </TouchableOpacity>
+          <View style={styles.rememberMe}>
+            <Text style={styles.rememberMeText}>Remember me</Text>
+          </View>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.signUpButton}>
+              <Text style={styles.signUpButtonText}>Sign Up</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-        <View style={styles.otherButtons}>
-          <Text style={styles.rememberMe}>Remember me</Text>
-        </View>
-        <View style={styles.alreadyHaveAccount}>
-          <Text style={styles.linkText}>Already have an account?</Text>
-          <Text style={styles.linkText}>Sign In</Text>
-        </View>
-      </View>
-    </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+  },
+  scrollViewContent: {
+    flexGrow: 1,
   },
   backgroundImage: {
     position: 'absolute',
@@ -55,11 +64,11 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   overlay: {
-    flex: 1,
     width: '80%',
     padding: 20,
     borderRadius: 10,
-    top: 240,
+    alignSelf: 'center',
+    marginTop: 240,
   },
   head: {
     fontSize: 26,
@@ -94,21 +103,22 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     textAlign: 'center',
   },
-  otherButtons: {
+  rememberMe: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
     marginBottom: 20,
   },
-  rememberMe: {
+  rememberMeText: {
     color: 'blue',
   },
-  alreadyHaveAccount: {
+  alreadyHaveAccountButton: {
+    marginBottom: 20,
     flexDirection: 'row',
     justifyContent: 'center',
   },
-  linkText: {
+  buttonText: {
     color: '#7D3DFD',
-    marginLeft: 10,
   },
 });
 

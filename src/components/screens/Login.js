@@ -1,36 +1,44 @@
 import React from 'react';
-import { View, Text, Image, TextInput, StyleSheet } from 'react-native';
+import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, ScrollView, KeyboardAvoidingView } from 'react-native';
 import logbd from '../../../assets/logbd.png';
 
-const Login = () => {
+const Login = ({ navigation }) => {
+  const handleSignUp = () => {
+    navigation.navigate('SignUp');
+  };
+
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView style={styles.container} behavior="padding">
       <Image style={styles.backgroundImage} source={logbd} />
       <View style={styles.overlay}>
         <Text style={styles.head}>Login to ClothCanvas</Text>
-        <View style={styles.formGroup}>
-          <Text style={styles.label}>Email</Text>
-          <TextInput style={styles.input} placeholder="Enter your email" />
-        </View>
-        <View style={styles.formGroup}>
-          <Text style={styles.label}>Password</Text>
-          <TextInput style={styles.input} placeholder="Enter your password" secureTextEntry />
-        </View>
-        <View style={styles.buttonContainer}>
-          <View style={styles.loginButton}>
-            <Text style={styles.loginButtonText}>Login</Text>
+        <ScrollView contentContainerStyle={styles.scrollViewContent}>
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Email</Text>
+            <TextInput style={styles.input} placeholder="Enter your email" />
           </View>
-        </View>
-        <View style={styles.otherButtons}>
-          <Text style={styles.rememberMe}>Remember me</Text>
-          <Text style={styles.linkText}>Forgot Password</Text>
-        </View>
-        <View style={styles.alreadyHaveAccount}>
-          <Text style={styles.linkText}>Don't have an account?</Text>
-          <Text style={styles.linkText}>Sign Up</Text>
-        </View>
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Password</Text>
+            <TextInput style={styles.input} placeholder="Enter your password" secureTextEntry />
+          </View>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.loginButton}>
+              <Text style={styles.loginButtonText}>Login</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.otherButtons}>
+            <Text style={styles.rememberMe}>Remember me</Text>
+            <Text style={styles.linkText}>Forgot Password</Text>
+          </View>
+          <View style={styles.alreadyHaveAccount}>
+            <Text>Don't have an account? </Text>
+            <TouchableOpacity onPress={handleSignUp}>
+              <Text style={styles.linkText}>Sign Up</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -62,6 +70,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'black',
     marginBottom: 30,
+    textAlign: 'center',  // Center the text
+    fontWeight: 'bold',  // Make the text bold (optional)
+    top: 250,
   },
   formGroup: {
     marginBottom: 20,
@@ -83,7 +94,6 @@ const styles = StyleSheet.create({
   buttonContainer: {
     marginBottom: 20,
     width: '80%',
-
   },
   loginButton: {
     backgroundColor: '#7D3DFD',
@@ -99,7 +109,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '80%',
-    marginBottom: 20,
+    marginBottom: 40,
     color: 'black',
   },
   rememberMe: {
@@ -112,6 +122,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     width: '80%',
+  },
+  scrollViewContent: {
+    flexGrow: 3,
+    justifyContent: 'center',
+    top:20,
+    left: 18,
   },
 });
 
