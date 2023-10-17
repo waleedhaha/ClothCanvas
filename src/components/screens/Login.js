@@ -1,10 +1,59 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, ScrollView, KeyboardAvoidingView } from 'react-native';
 import logbd from '../../../assets/logbd.png';
 
 const Login = ({ navigation }) => {
+  const [fdata, setFdata] = useState({
+    email: '',
+    password: ''
+  });
+
+  const [errors, setErrors] = useState({
+    email: null,
+    password: null,
+  });
+
   const handleSignUp = () => {
     navigation.navigate('SignUp');
+  };
+
+  const Sentobackend = () => {
+    const newErrors = {};
+
+    if (!fdata.email) {
+      newErrors.email = 'Email is required';
+    }
+    if (!fdata.password) {
+      newErrors.password = 'Password is required';
+    }
+
+    setErrors(newErrors);
+
+    if (Object.values(newErrors).some((error) => error !== null)) {
+      return;
+    }
+    else{
+      fetch ('http://192.168.18.164:3000/signin',{
+
+      method: 'POST',
+      headers: {
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify(fdata)
+      })
+       .then(res => res.json()).then(
+        data => {
+          //console.log(data);
+          if (data.error){
+            setErrors(data.error);
+        }
+        else {
+          alert('Login sucsessfully');
+          navigation.navigate('Homepage');
+        }
+      }
+       )
+    }
   };
 
   return (
@@ -13,16 +62,32 @@ const Login = ({ navigation }) => {
       <View style={styles.overlay}>
         <Text style={styles.head}>Login to ClothCanvas</Text>
         <ScrollView contentContainerStyle={styles.scrollViewContent}>
-          <View style={styles.formGroup}>
-            <Text style={styles.label}>Email</Text>
-            <TextInput style={styles.input} placeholder="Enter your email" />
-          </View>
-          <View style={styles.formGroup}>
-            <Text style={styles.label}>Password</Text>
-            <TextInput style={styles.input} placeholder="Enter your password" secureTextEntry />
-          </View>
+        <View style={styles.formGroup}>
+  <Text style={styles.label}>Email</Text>
+  <TextInput
+    style={styles.input}
+    placeholder="Enter your email"
+    onPressIn={() => setErrors({ ...errors, email: null })}
+    onChangeText={(text) => setFdata({ ...fdata, email: text })}
+    onFocus={() => setErrors({ ...errors, email: null })}
+  />
+  {errors.email && <Text style={styles.errormessage}>{errors.email}</Text>}
+</View>
+
+<View style={styles.formGroup}>
+  <Text style={styles.label}>Password</Text>
+  <TextInput
+    style={styles.input}
+    placeholder="Enter your password"
+    secureTextEntry
+    onChangeText={(text) => setFdata({ ...fdata, password: text })}
+    onFocus={() => setErrors({ ...errors, password: null })}
+  />
+  {errors.password && <Text style={styles.errormessage}>{errors.password}</Text>}
+</View>
+
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.loginButton}>
+            <TouchableOpacity style={styles.loginButton} onPress={() => Sentobackend()}>
               <Text style={styles.loginButtonText}>Login</Text>
             </TouchableOpacity>
           </View>
@@ -58,7 +123,6 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    position: 'absolute',
     width: '100%',
     height: '100%',
     justifyContent: 'center',
@@ -128,6 +192,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     top:20,
     left: 18,
+  },
+  errormessage: {
+    color: 'white',
+    fontSize: 15,
+    textAlign: 'middle', // Align to the right side
+    backgroundColor: 'red',
+    padding: 3,
+    borderRadius: 10,
+    marginRight: 12, // Add margin to separate from the input field
+    marginTop: 8,
   },
 });
 
