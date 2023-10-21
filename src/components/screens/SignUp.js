@@ -12,86 +12,51 @@ import {
 import signupbd from '../../../assets/signupbd.png';
 import { useNavigation } from '@react-navigation/native';
 
-const SignUp = () => {
-  const [fdata, setfdata] = useState({
+const Signup = () => {
+  const [fdata, setFdata] = useState({
     name: '',
     email: '',
     password: '',
     cpassword: '',
   });
 
-  const [errors, setErrors] = useState({
-    name: null,
-    email: null,
-    password: null,
-    cpassword: null,
-  });
-
-  const handleFieldFocus = (field) => {
-    setErrors({
-      ...errors,
-      [field]: null,
-    });
-  };
-
-  const Sentobackend = () => {
-    
-    const newErrors = {};
-  
-    if (!fdata.name) {
-      newErrors.name = 'Name is required';
-    }
-    if (!fdata.email) {
-      newErrors.email = 'Email is required';
-    }
-    if (!fdata.password) {
-      newErrors.password = 'Password is required';
-    }
-    if (!fdata.cpassword) {
-      newErrors.cpassword = 'Confirm Password is required';
-    }
-  
-    setErrors(newErrors);
-  
-    if (Object.values(newErrors).some((error) => error !== null)) {
-      return;
-    } else {
-      if (fdata.password !== fdata.cpassword) {
-        setErrors({
-          ...errors,
-          cpassword: 'Password and Confirm Password must be the same',
-        });
-        return;
-      } 
-      else {
-        fetch('http://192.168.18.164:3000/signup', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(fdata),
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            if (data.error) {
-              setErrors({ ...errors, general: data.error });
-            } else {
-              alert('Account created successfully');
-              navigation.navigate('Login');
-            }
-          })
-          .catch((error) => {
-            console.error('Error:', error);
-          });
-      }
-    }
-  };
-  
+  const [errormsg, setErrormsg] = useState(null);
 
   const navigation = useNavigation();
 
   const handleAlreadyHaveAccount = () => {
     navigation.navigate('Login');
+  };
+
+  const Sendtobackend = async () => {
+    if (!fdata.name || !fdata.email || !fdata.password || !fdata.cpassword) {
+      setErrormsg('All fields are required');
+      return;
+    } else if (fdata.password !== fdata.cpassword) {
+      setErrormsg('Password and Confirm Password must be the same');
+      return;
+    } else {
+      try {
+        const response = await fetch('http://192.168.18.164:3000/verify', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(fdata),
+        });
+
+        const data = await response.json();
+
+        if (data.error === 'Invalid Credentials') {
+          setErrormsg('Invalid Credentials');
+        } else if (data.message === 'Verification Code Sent to your Email') {
+          alert(data.message);
+          navigation.navigate('verification', { userdata: data.udata });
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
   };
 
   return (
@@ -100,16 +65,15 @@ const SignUp = () => {
         <Image style={styles.backgroundImage} source={signupbd} />
         <View style={styles.overlay}>
           <Text style={styles.head}>Sign Up</Text>
+          {errormsg && <Text style={styles.errormessage}>{errormsg}</Text>}
 
           <View style={styles.formGroup}>
             <Text style={styles.label}>Email</Text>
             <TextInput
               style={styles.input}
               placeholder="Enter your Email"
-              onChangeText={(text) => setfdata({ ...fdata, email: text })}
-              onFocus={() => handleFieldFocus('email')}
+              onChangeText={(text) => setFdata({ ...fdata, email: text })}
             />
-            {errors.email && <Text style={styles.errormessage}>{errors.email}</Text>}
           </View>
 
           <View style={styles.formGroup}>
@@ -117,10 +81,8 @@ const SignUp = () => {
             <TextInput
               style={styles.input}
               placeholder="Enter your username"
-              onChangeText={(text) => setfdata({ ...fdata, name: text })}
-              onFocus={() => handleFieldFocus('name')}
+              onChangeText={(text) => setFdata({ ...fdata, name: text })}
             />
-            {errors.name && <Text style={styles.errormessage}>{errors.name}</Text>}
           </View>
 
           <View style={styles.formGroup}>
@@ -129,10 +91,8 @@ const SignUp = () => {
               style={styles.input}
               placeholder="Enter your password"
               secureTextEntry={true}
-              onChangeText={(text) => setfdata({ ...fdata, password: text })}
-              onFocus={() => handleFieldFocus('password')}
+              onChangeText={(text) => setFdata({ ...fdata, password: text })}
             />
-            {errors.password && <Text style={styles.errormessage}>{errors.password}</Text>}
           </View>
 
           <View style={styles.formGroup}>
@@ -141,10 +101,8 @@ const SignUp = () => {
               style={styles.input}
               placeholder="Confirm your password"
               secureTextEntry={true}
-              onChangeText={(text) => setfdata({ ...fdata, cpassword: text })}
-              onFocus={() => handleFieldFocus('cpassword')}
+              onChangeText={(text) => setFdata({ ...fdata, cpassword: text })}
             />
-            {errors.cpassword && <Text style={styles.errormessage}>{errors.cpassword}</Text>}
           </View>
 
           <TouchableOpacity
@@ -153,16 +111,8 @@ const SignUp = () => {
             <Text style={styles.buttonText}>Already have an account?</Text>
           </TouchableOpacity>
 
-          <View style={styles.rememberMe}>
-            <Text style={styles.rememberMeText}>Remember me</Text>
-          </View>
-
           <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={styles.signUpButton}
-              onPress={() => {
-                Sentobackend();
-              }}>
+            <TouchableOpacity style={styles.signUpButton} onPress={Sendtobackend}>
               <Text style={styles.signUpButtonText}>Sign Up</Text>
             </TouchableOpacity>
           </View>
@@ -171,6 +121,7 @@ const SignUp = () => {
     </KeyboardAvoidingView>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -242,6 +193,9 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#7D3DFD',
   },
+  errormessage: {
+    color: 'red',
+  },
 });
 
-export default SignUp;
+export default Signup;

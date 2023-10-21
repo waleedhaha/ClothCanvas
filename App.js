@@ -1,10 +1,13 @@
+// app.js
+
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, View, Button } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import Welcome from './src/components/screens/Welcome';
 import Login from './src/components/screens/Login';
 import SignUp from './src/components/screens/SignUp';
-import Homepage from './src/components/screens/Homepage';  // Import the Home component
+import Homepage from './src/components/screens/Homepage';
+import info from './src/components/screens/info';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -33,6 +36,11 @@ export default function App() {
           <Stack.Screen
             name="Homepage"
             component={Homepage}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="info"
+            component={info}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>

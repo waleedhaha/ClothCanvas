@@ -31,28 +31,38 @@ const Login = ({ navigation }) => {
 
     if (Object.values(newErrors).some((error) => error !== null)) {
       return;
-    }
-    else{
-      fetch ('http://192.168.18.164:3000/signin',{
-
-      method: 'POST',
-      headers: {
-        'Content-Type':'application/json'
-      },
-      body:JSON.stringify(fdata)
+    } else {
+      // Check if the user already has details filled
+      fetch('http://192.168.18.164:3000/signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(fdata)
       })
-       .then(res => res.json()).then(
-        data => {
-          //console.log(data);
-          if (data.error){
-            setErrors(data.error);
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) {
+          if (data.error === 'Password does not match') {
+            setErrors({ ...errors, password: 'Incorrect Password' });
+            setErrors({ ...errors, email: null }); // Reset email error
+          } else if (data.error === 'Email Not Found') {
+            setErrors({ ...errors, email: 'Email Not Found' });
+            setErrors({ ...errors, password: null }); // Reset password error
+          }
+        } else {
+          // Check if the user already has details filled
+          if (data.detailsFilled) {
+            // User has details filled, navigate to Homepage
+            alert('Login successfully');
+            navigation.navigate('Homepage');
+          } else {
+            // User is new, navigate to Info page
+            alert('Login successfully, but user is new');
+            navigation.navigate('info');
+          }
         }
-        else {
-          alert('Login sucsessfully');
-          navigation.navigate('Homepage');
-        }
-      }
-       )
+      });
     }
   };
 
@@ -62,29 +72,29 @@ const Login = ({ navigation }) => {
       <View style={styles.overlay}>
         <Text style={styles.head}>Login to ClothCanvas</Text>
         <ScrollView contentContainerStyle={styles.scrollViewContent}>
-        <View style={styles.formGroup}>
-  <Text style={styles.label}>Email</Text>
-  <TextInput
-    style={styles.input}
-    placeholder="Enter your email"
-    onPressIn={() => setErrors({ ...errors, email: null })}
-    onChangeText={(text) => setFdata({ ...fdata, email: text })}
-    onFocus={() => setErrors({ ...errors, email: null })}
-  />
-  {errors.email && <Text style={styles.errormessage}>{errors.email}</Text>}
-</View>
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Email</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter your email"
+              onPressIn={() => setErrors({ ...errors, email: null })}
+              onChangeText={(text) => setFdata({ ...fdata, email: text })}
+              onFocus={() => setErrors({ ...errors, email: null })}
+            />
+            {errors.email && <Text style={styles.errorMessage}>{errors.email}</Text>}
+          </View>
 
-<View style={styles.formGroup}>
-  <Text style={styles.label}>Password</Text>
-  <TextInput
-    style={styles.input}
-    placeholder="Enter your password"
-    secureTextEntry
-    onChangeText={(text) => setFdata({ ...fdata, password: text })}
-    onFocus={() => setErrors({ ...errors, password: null })}
-  />
-  {errors.password && <Text style={styles.errormessage}>{errors.password}</Text>}
-</View>
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Password</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter your password"
+              secureTextEntry
+              onChangeText={(text) => setFdata({ ...fdata, password: text })}
+              onFocus={() => setErrors({ ...errors, password: null })}
+            />
+            {errors.password && <Text style={styles.errorMessage}>{errors.password}</Text>}
+          </View>
 
           <View style={styles.buttonContainer}>
             <TouchableOpacity style={styles.loginButton} onPress={() => Sentobackend()}>
@@ -92,15 +102,15 @@ const Login = ({ navigation }) => {
             </TouchableOpacity>
           </View>
           <View style={styles.otherButtons}>
-            <Text style={styles.rememberMe}>Remember me</Text>
-            <Text style={styles.linkText}>Forgot Password</Text>
-          </View>
-          <View style={styles.alreadyHaveAccount}>
-            <Text>Don't have an account? </Text>
-            <TouchableOpacity onPress={handleSignUp}>
-              <Text style={styles.linkText}>Sign Up</Text>
-            </TouchableOpacity>
-          </View>
+  <Text style={styles.rememberMe}>Remember me</Text>
+  <Text style={styles.linkText}>Forgot Password</Text>
+</View>
+<View style={styles.alreadyHaveAccount}>
+  <Text>Don't have an account? </Text>
+  <TouchableOpacity onPress={handleSignUp}>
+    <Text style={styles.linkText}>Sign Up</Text>
+  </TouchableOpacity>
+</View>
         </ScrollView>
       </View>
     </KeyboardAvoidingView>
@@ -134,8 +144,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'black',
     marginBottom: 30,
-    textAlign: 'center',  // Center the text
-    fontWeight: 'bold',  // Make the text bold (optional)
+    textAlign: 'center',
+    fontWeight: 'bold',
     top: 250,
   },
   formGroup: {
@@ -190,17 +200,16 @@ const styles = StyleSheet.create({
   scrollViewContent: {
     flexGrow: 3,
     justifyContent: 'center',
-    top:20,
+    top: 20,
     left: 18,
   },
-  errormessage: {
-    color: 'white',
+  errorMessage: {
+    color: 'red',
     fontSize: 15,
-    textAlign: 'middle', // Align to the right side
-    backgroundColor: 'red',
+    textAlign: 'center',
+    backgroundColor: 'white',
     padding: 3,
     borderRadius: 10,
-    marginRight: 12, // Add margin to separate from the input field
     marginTop: 8,
   },
 });

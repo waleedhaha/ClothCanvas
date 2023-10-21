@@ -1,35 +1,56 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import { StyleSheet, Text, View, Image } from 'react-native';
 
-const Home = ({ navigation }) => {
-  const handleLogout = () => {
-    // Implement your logout logic here
-    // For simplicity, let's assume you're using a function to log out
-    // Example: logoutUser()
-    // This function should handle clearing user authentication data and navigating to the login screen
-    // Replace this with your actual logout logic
-    console.log('Logging out...');
-    navigation.navigate('Login');
-  };
-
-  return (
+const App = () => {
+ return (
     <View style={styles.container}>
-      <Text style={styles.text}>Welcome to the Home Page!</Text>
-      <Button title="Logout" onPress={handleLogout} />
+      <Image
+        style={styles.image}
+        source={{ uri: 'https://www.pinterest.com/pin/cute-spring-nails--950822540051183572/' }}
+      />
+      <Text style={styles.welcome}>Good morning</Text>
+      <Text style={styles.description}>
+        Looks Inspired by your wardrobe
+      </Text>
+      <View style={styles.outfitContainer}>
+        <Text style={styles.outfitTitle}>Outfits of the day</Text>
+        <Text style={styles.outfitTitle}>Outfits for the week</Text>
+      </View>
     </View>
-  );
+ );
 };
 
 const styles = StyleSheet.create({
-  container: {
+ container: {
     flex: 1,
-    justifyContent: 'center',
+    backgroundColor: '#fff',
     alignItems: 'center',
-  },
-  text: {
-    fontSize: 20,
+    justifyContent: 'center',
+ },
+ image: {
+    width: 100,
+    height: 100,
     marginBottom: 20,
-  },
+ },
+ welcome: {
+    fontSize: 20,
+    textAlign: 'center',
+    margin: 10,
+ },
+ description: {
+    fontSize: 16,
+    textAlign: 'center',
+    margin: 10,
+ },
+ outfitContainer: {
+    alignItems: 'center',
+    marginTop: 20,
+ },
+ outfitTitle: {
+    fontSize: 18,
+    textAlign: 'center',
+    marginBottom: 10,
+ },
 });
 
-export default Home;
+export default App;
