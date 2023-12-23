@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, ScrollView, KeyboardAvoidingView } from 'react-native';
 import logbd from '../../../assets/logbd.png';
+import {signIn} from '../../constants/endpoints'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const Login = ({ navigation }) => {
   const [fdata, setFdata] = useState({
@@ -33,7 +36,7 @@ const Login = ({ navigation }) => {
       return;
     } else {
       // Check if the user already has details filled
-      fetch('http://192.168.18.164:3000/signin', {
+      fetch(signIn, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -54,8 +57,9 @@ const Login = ({ navigation }) => {
           // Check if the user already has details filled
           if (data.detailsFilled) {
             // User has details filled, navigate to Homepage
+            AsyncStorage.setItem('userToken', data.token);
             alert('Login successfully');
-            navigation.navigate('Homepage');
+            navigation.navigate('Home');
           } else {
             // User is new, navigate to Info page
             alert('Login successfully, but user is new');

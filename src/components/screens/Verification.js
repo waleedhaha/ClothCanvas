@@ -1,5 +1,6 @@
 import React, { useState,useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { signUp } from '../../constants/endpoints'
 
 const Verification = ({ navigation, route }) => {
   const {userdata} = route.params;
@@ -30,7 +31,7 @@ const Verification = ({ navigation, route }) => {
         name: userdata[0]?.name,   
          }
   
-      fetch('http://192.168.18.164:3000/signup', {
+      fetch(signUp, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

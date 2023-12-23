@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import signupbd from '../../../assets/signupbd.png';
 import { useNavigation } from '@react-navigation/native';
+import {verifyUser} from '../../constants/endpoints'
 
 const Signup = () => {
   const [fdata, setFdata] = useState({
@@ -37,7 +38,7 @@ const Signup = () => {
       return;
     } else {
       try {
-        const response = await fetch('http://192.168.18.164:3000/verify', {
+        const response = await fetch(verifyUser, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -51,7 +52,7 @@ const Signup = () => {
           setErrormsg('Invalid Credentials');
         } else if (data.message === 'Verification Code Sent to your Email') {
           alert(data.message);
-          navigation.navigate('verification', { userdata: data.udata });
+          navigation.navigate('Verification', { userdata: data.udata });
         }
       } catch (error) {
         console.error('Error:', error);

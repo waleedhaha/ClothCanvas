@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, KeyboardAvoidingView } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import ModalSelector from 'react-native-modal-selector';
+import {addUserPreferences} from '../../constants/endpoints'
 
 const UserPreferences = () => {
+  const navigation = useNavigation();
   const [formData, setFormData] = useState({
     name: '',
     dob: '',
@@ -24,7 +27,7 @@ const UserPreferences = () => {
     try {
       // Perform validation here if needed
 
-      const response = await fetch('http://192.168.18.164:3000/user-preferences', {
+      const response = await fetch(addUserPreferences, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -35,6 +38,8 @@ const UserPreferences = () => {
       if (response.status === 201) {
         // User preferences saved successfully
         console.log('User preferences saved successfully');
+        // Navigate to StylePreferences screen
+        navigation.navigate('StylePreferences');
       } else {
         // Handle errors or display error messages
         console.error('Error saving user preferences');
