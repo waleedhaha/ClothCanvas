@@ -28,7 +28,8 @@ const Verification = ({ navigation, route }) => {
       const fdata = {
         email: userdata[0]?.email,
         password: userdata[0]?.password,
-        name: userdata[0]?.name,   
+        name: userdata[0]?.name,
+        otp:""
          }
   
       fetch(signUp, {

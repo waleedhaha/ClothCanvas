@@ -1,6 +1,6 @@
-export const baseUrl = 'http://192.168.18.164:3000'
+export const baseUrl = 'http://192.168.18.184:3000'
 
-export const baseUrlImage = 'http://192.168.18.164:3000/uploads/'
+export const baseUrlImage = 'http://192.168.18.184:3000/uploads/'
 
 
 export const verifyUser = `${baseUrl}/verify`

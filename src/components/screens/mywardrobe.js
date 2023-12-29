@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import { SafeAreaView, View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { useSelector } from 'react-redux';
 
 import {
   fetchCategories,
@@ -10,9 +11,11 @@ import ImageList from './ImageList'; // Make sure to use the correct path to Ima
 import axios from "axios";
 
 const MyWardrobe = () => {
+  const user = useSelector((state) => state.auth.user);
+  
   const [availableCategories, setAvailableCategories] = useState([]);
   const [wardrobeData, setWardrobeData] = useState([]);
-
+   
 
   const [selectedCategory, setSelectedCategory] = useState(-1);
 
@@ -33,7 +36,7 @@ const MyWardrobe = () => {
 
   const getWardrobeData = async () => {
     try {
-      const url = selectedCategory === -1  ? `${getUserWardrobe}/6579c8bbb80e74db64fd8678` : `${getUserWardrobe}/6579c8bbb80e74db64fd8678?categoryId=${availableCategories[selectedCategory]._id}`
+      const url = selectedCategory === -1  ? `${getUserWardrobe}/${user?._id}` : `${getUserWardrobe}/${user?._id}?categoryId=${availableCategories[selectedCategory]._id}`
       const res = await axios.get(url);
       // console.log(res);
       if (res && res.data.success) {

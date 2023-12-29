@@ -4,7 +4,11 @@ import { useNavigation } from '@react-navigation/native';
 import ModalSelector from 'react-native-modal-selector';
 import {addUserPreferences} from '../../constants/endpoints'
 
+import { useSelector } from 'react-redux'
+
 const UserPreferences = () => {
+  const user = useSelector((state) => state.auth.user); // Access user data from the Redux store
+  console.log("user",user)
   const navigation = useNavigation();
   const [formData, setFormData] = useState({
     name: '',
@@ -26,19 +30,20 @@ const UserPreferences = () => {
   const handleSubmit = async () => {
     try {
       // Perform validation here if needed
-
+      
       const response = await fetch(addUserPreferences, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({...formData, userId: user?._id, setIsFilledUserFlag: true }),
       });
 
       if (response.status === 201) {
         // User preferences saved successfully
         console.log('User preferences saved successfully');
         // Navigate to StylePreferences screen
+        await AsyncStorage.removeItem("detailsNotFilled");
         navigation.navigate('StylePreferences');
       } else {
         // Handle errors or display error messages

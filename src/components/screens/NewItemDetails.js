@@ -1,4 +1,4 @@
-
+import { useSelector } from 'react-redux'
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -20,6 +20,9 @@ import {
 import { Picker } from "@react-native-picker/picker";
 
 const NewItemDetails = ({ route ,navigation}) => {
+  const user = useSelector((state) => state.auth.user);
+
+
   const { image } = route.params;
   const [category, setCategory] = useState("");
   const [color, setColor] = useState("");
@@ -159,7 +162,7 @@ const NewItemDetails = ({ route ,navigation}) => {
         subCategoryId: availableSubCategories[selectedSubCategory]._id,
         shoeSize: 0,
         imageUrl: imageUploadRes.imageUrl,
-        userId: "657d97d28f5c4121e01ac193",
+        userId: user?._id,
         size
       }
       const res = await axios.post(addUserWardrobe,{...object})
