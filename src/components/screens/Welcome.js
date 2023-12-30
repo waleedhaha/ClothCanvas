@@ -21,7 +21,7 @@ const Welcome = ({ navigation }) => {
     console.log(user, userToken, detailsNotFilled);
     if (userToken && user) {
       dispatch(setIsAuthenticated(true));
-      dispatch(setUser(user));
+      dispatch(setUser(JSON.parse(user)));
       if (detailsNotFilled) {
         navigation.navigate("info");
       } else {

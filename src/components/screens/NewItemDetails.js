@@ -21,6 +21,7 @@ import { Picker } from "@react-native-picker/picker";
 
 const NewItemDetails = ({ route ,navigation}) => {
   const user = useSelector((state) => state.auth.user);
+  console.log(user)
 
 
   const { image } = route.params;

@@ -1,10 +1,8 @@
-import React, { useEffect } from "react";
-import { SafeAreaView, StyleSheet, Text, View } from "react-native";
+import React from "react";
+import { SafeAreaView, StyleSheet, Text, View, ScrollView } from "react-native";
 import Date from "../../common/Date";
 import GreetingComponent from "../../common/GreetingComponent";
 import Slider from "../../common/Slider";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useDispatch, useSelector } from 'react-redux'; // Import hooks
 
 const images = [
   require('../../../assets/a.jpeg'),
@@ -16,13 +14,9 @@ const images = [
 ];
 
 function Mainpage() {
-  const dispatch = useDispatch(); // Initialize useDispatch hook
-
-  const user = useSelector((state) => state.auth.user); // Access user data from the Redux store
-
   return (
-    <>
-      <SafeAreaView>
+    <SafeAreaView style={{ flex: 1 }}>
+      <ScrollView>
         <View style={styles.mainTop}>
           <View style={styles.date}>
             <Date />
@@ -41,8 +35,8 @@ function Mainpage() {
         <View style={styles.imageSlider}>
           <Slider title={"Trending"} images={images} />
         </View>
-      </SafeAreaView>
-    </>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -56,8 +50,9 @@ const styles = StyleSheet.create({
   a: { width: 300 },
   slogan: { textAlign: "center" },
   imageSlider: {
-    width: '100vW',
+    width: '100%',
   },
 });
 
 export default Mainpage;
+    

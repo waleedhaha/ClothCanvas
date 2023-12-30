@@ -1,8 +1,12 @@
 // ProfileScreen.js
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { useSelector } from "react-redux";
+import {baseUrlImage} from '../../constants/endpoints'
 
 const ProfileScreen = ({ navigation }) => {
+  const user = useSelector((state) => state.auth.user); // Access user data from the Redux store
+
   // Placeholder function for Edit Profile button
   const onEditProfile = () => {
     navigation.navigate('Settings');
@@ -12,7 +16,7 @@ const ProfileScreen = ({ navigation }) => {
     <ScrollView style={styles.container}>
       <View style={styles.headerContainer}>
         <Image
-          source={{ uri: 'https://via.placeholder.com/150' }}
+          source={{ uri: user?.avatarUrl?  baseUrlImage + user?.avatarUrl :'https://via.placeholder.com/150' }}
           style={styles.avatar}
         />
         {/* Replace with user's profile image URI */}

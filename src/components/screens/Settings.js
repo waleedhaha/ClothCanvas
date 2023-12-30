@@ -1,25 +1,35 @@
 // SettingsScreen.js
 import React from 'react';
 import { View, Text, StyleSheet, Button, ScrollView, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { setUser, setIsAuthenticated } from "../../../redux/authSlice";
+import { useSelector, useDispatch } from 'react-redux'
 
 const SettingsScreen = ({ navigation }) => {
-    const handleLogout = () => {
-        Alert.alert(
-            "Logout",
-            "Are you sure you want to log out?",
-            [
-              {
-                text: "Cancel",
-                style: "cancel"
-              },
-              { text: "OK", onPress: () => navigation.replace('Login') }
-            ]
-          );
-        };
+  const dispatch = useDispatch();
 
+  const handleLogout = async () => {
+    try {
+      // Clear session data from AsyncStorage or secure storage
+      await AsyncStorage.removeItem('userToken');
+      await AsyncStorage.removeItem('user');
+      dispatch(setUser(null))
+      dispatch(setIsAuthenticated(false))
 
-
-
+      Alert.alert(
+        "Logout",
+        "You have been logged out successfully.",
+        [
+          {
+            text: "OK",
+            onPress: () => navigation.replace('Login'),
+          },
+        ]
+      );
+    } catch (error) {
+      console.error('Error clearing session:', error);
+    }
+  };
 
   return (
     <ScrollView style={styles.container}>
