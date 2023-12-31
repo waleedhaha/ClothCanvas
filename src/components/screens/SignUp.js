@@ -149,9 +149,10 @@ const styles = StyleSheet.create({
     color: 'black',
     marginBottom: 30,
     textAlign: 'center',
+    marginTop: 10,
   },
   formGroup: {
-    marginBottom: 20,
+    marginBottom: 10,
   },
   label: {
     fontSize: 17,
@@ -196,6 +197,7 @@ const styles = StyleSheet.create({
   },
   errormessage: {
     color: 'red',
+    marginTop : -10,
   },
 });
 

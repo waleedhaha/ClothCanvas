@@ -16,7 +16,7 @@ import { signIn } from "../../constants/endpoints";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 
-import { setIsAuthenticated, setUser } from "../../../redux/authSlice";
+import { setIsAuthenticated, setUser, setDetailsNotFilled } from "../../../redux/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 const Login = () => {
@@ -81,6 +81,7 @@ const Login = () => {
               dispatch(setUser(data?.user))
               if (!data?.detailsFilled) {
                 await AsyncStorage.setItem("detailsNotFilled", JSON.stringify(true));
+                dispatch(setDetailsNotFilled(true));
                 navigation.navigate("info");
               } else {
                 navigation.navigate("Home");
@@ -180,7 +181,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "black",
     marginBottom: 30,
-    textAlign: "center",
+    //textAlign: "center",
     fontWeight: "bold",
     top: 250,
   },

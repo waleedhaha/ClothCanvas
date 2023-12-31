@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -22,10 +22,10 @@ import { useSelector, useDispatch } from "react-redux";
 import * as ImagePicker from "expo-image-picker";
 import UserImg from "../../../assets/account.png";
 import axios from "axios";
-import { setUser } from "../../../redux/authSlice";
+import { setUser, setDetailsNotFilled } from "../../../redux/authSlice";
 
 const UserPreferences = () => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user); // Access user data from the Redux store
 
   const navigation = useNavigation();
@@ -39,6 +39,17 @@ const UserPreferences = () => {
     skinTone: "",
     profilePicture: null,
   });
+
+  const isDetailsNotFilled = async () => {
+    const detailsNotFilled = await AsyncStorage.getItem("detailsNotFilled");
+    if (!detailsNotFilled) {
+      navigation.navigate("Home");
+    }
+  };
+
+  useEffect(() => {
+    isDetailsNotFilled();
+  }, []);
 
   const handleChange = (name, value) => {
     setFormData({
@@ -133,6 +144,7 @@ const UserPreferences = () => {
           const updatedUserDetails = await getUser();
           if (updatedUserDetails) {
             dispatch(setUser(updatedUserDetails));
+            dispatch(setDetailsNotFilled(false));
             await AsyncStorage.setItem(
               "user",
               JSON.stringify(updatedUserDetails)

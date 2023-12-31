@@ -11,7 +11,7 @@ const Welcome = ({ navigation }) => {
   const dispatch  = useDispatch();
 
   useEffect(() => {
-    checkToken();
+    // checkToken();
   }, []);
 
   const checkToken = async () => {
