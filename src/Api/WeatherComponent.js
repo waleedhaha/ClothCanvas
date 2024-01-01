@@ -1,34 +1,55 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button } from 'react-native';
-import Geolocation from '@react-native-community/geolocation';
-import Weather from '../constants/endpoints';
+import { StyleSheet, View, Text, Button } from 'react-native';
+import * as Location from 'expo-location';
+import axios from 'axios'; // Ensure axios is installed
+import { Weather } from './src/constants/endpoints';
 
-const WeatherComponent = () => {
+export default function App() {
+  const [location, setLocation] = useState(null);
   const [weather, setWeather] = useState(null);
 
-  const fetchWeather = (latitude, longitude) => {
-    fetch(`${Weather}?lat=${latitude}&lon=${longitude}`)
-      .then(response => response.json())
-      .then(data => setWeather(data))
-      .catch(error => console.error(error));
-  };
+  useEffect(() => {
+    const getPermissionsAndLocation = async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        console.log("Please grant location permissions");
+        return;
+      }
 
-  const getLocationAndWeather = () => {
-    Geolocation.getCurrentPosition(
-      position => {
-        fetchWeather(position.coords.latitude, position.coords.longitude);
-      },
-      error => console.error(error),
-      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-    );
+      let currentLocation = await Location.getCurrentPositionAsync({});
+      setLocation(currentLocation);
+      fetchWeather(currentLocation.coords.latitude, currentLocation.coords.longitude);
+    };
+
+    getPermissionsAndLocation();
+  }, []);
+
+  const fetchWeather = async (lat, lon) => {
+    try {
+      const response = await axios.get(`${Weather}?lat=${lat}&lon=${lon}`); // Replace with your backend URL
+      setWeather(response.data);
+    } catch (error) {
+      console.error('Error fetching weather data:', error);
+    }
   };
 
   return (
-    <View>
-      <Button title="Get Weather" onPress={getLocationAndWeather} />
-      {weather && <Text>Weather: {JSON.stringify(weather)}</Text>}
+    <View style={styles.container}>
+      {location && (
+        <Text>Current Location: Latitude {location.coords.latitude}, Longitude {location.coords.longitude}</Text>
+      )}
+      {weather && (
+        <Text>Weather: {weather.main.temp}°C, {weather.weather[0].description}</Text>
+      )}
     </View>
   );
-};
+}
 
-export default WeatherComponent;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
