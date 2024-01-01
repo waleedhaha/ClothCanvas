@@ -15,3 +15,4 @@ export const fetchSubCategoriesByCategory = `${baseUrl}/subcategories/fetchByCat
 export const addUserWardrobe = `${baseUrl}/user-wardrobe`
 export const getUserWardrobe = `${baseUrl}/user-wardrobe`
 export const uploadFileUrl = `${baseUrl}/uploadFile`
+export const Weather = `${baseUrl}/weather` 

@@ -19,11 +19,7 @@ import SettingsScreen from "./src/components/screens/Settings";
 import { Provider } from "react-redux";
 import store from "./redux/store"; // Adjust the path as needed
 import { useSelector, useDispatch } from "react-redux"; // Import your selector
-import {
-  setIsAuthenticated,
-  setUser,
-  setDetailsNotFilled,
-} from "./redux/authSlice"; // Adjust the path as needed
+import { setIsAuthenticated, setUser, setDetailsNotFilled } from "./redux/authSlice"; // Adjust the path as needed
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Stack = createNativeStackNavigator();
@@ -43,9 +39,8 @@ function BottomTabNavigator() {
 const Navigation = () => {
   const dispatch = useDispatch();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-  const detailsNotFilledRd = useSelector(
-    (state) => state.auth.detailsNotFilledRd
-  );
+  const detailsNotFilledRd = useSelector((state) => state.auth.detailsNotFilledRd);
+
 
   const checkIsAuthenticated = async () => {
     const user = await AsyncStorage.getItem("user");
@@ -68,38 +63,38 @@ const Navigation = () => {
     <Stack.Navigator>
       {isAuthenticated ? (
         <>
-          {detailsNotFilledRd ? (
+        {detailsNotFilledRd ?
             <Stack.Screen
-              name="info"
-              component={info}
-              options={{ headerShown: false }}
-            />
-          ) : (
-            <>
-              <Stack.Screen
-                name="Home"
-                component={BottomTabNavigator}
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="Settings"
-                component={SettingsScreen}
-                options={{ headerShown: false }}
-              />
+            name="info"
+            component={info}
+            options={{ headerShown: false }}
+          />
+    :
+    <>
+          <Stack.Screen
+            name="Home"
+            component={BottomTabNavigator}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Settings"
+            component={SettingsScreen}
+            options={{ headerShown: false }}
+          />
 
-              <Stack.Screen
-                name="StylePreferences"
-                component={StylePreferences}
-                options={{ headerShown: false }}
-              />
+          <Stack.Screen
+            name="StylePreferences"
+            component={StylePreferences}
+            options={{ headerShown: false }}
+          />
 
-              <Stack.Screen
-                name="NewItemDetails"
-                component={NewItemDetails}
-                options={{ headerShown: false }}
-              />
-            </>
-          )}
+          <Stack.Screen
+            name="NewItemDetails"
+            component={NewItemDetails}
+            options={{ headerShown: false }}
+          />
+        </>
+}
         </>
       ) : (
         <>
