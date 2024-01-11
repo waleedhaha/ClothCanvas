@@ -8,6 +8,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Image,
+  
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import ModalSelector from "react-native-modal-selector";
@@ -23,6 +24,8 @@ import * as ImagePicker from "expo-image-picker";
 import UserImg from "../../../assets/account.png";
 import axios from "axios";
 import { setUser, setDetailsNotFilled } from "../../../redux/authSlice";
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { Picker } from '@react-native-picker/picker';
 
 const UserPreferences = () => {
   const dispatch = useDispatch();
@@ -31,7 +34,7 @@ const UserPreferences = () => {
   const navigation = useNavigation();
   const [formData, setFormData] = useState({
     name: "",
-    dob: "",
+    dob: new Date(),
     height: "",
     occupation: "",
     weight: "",
@@ -39,6 +42,35 @@ const UserPreferences = () => {
     skinTone: "",
     profilePicture: null,
   });
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showHeightPicker, setShowHeightPicker] = useState(false);
+  const handleHeightChange = (selectedHeight) => {
+    setFormData({ ...formData, height: selectedHeight });
+    setShowHeightPicker(false); // Hide picker after selection
+  };
+
+
+  const handleDateChange = (event, selectedDate) => {
+    setShowDatePicker(Platform.OS === 'ios'); // Keep the picker open on iOS
+    if (selectedDate) {
+      setFormData({ ...formData, dob: selectedDate });
+      setShowDatePicker(false); // Hide picker after date is selected
+    }
+  };
+  const [height, setHeight] = useState("170"); // Default height as a string
+
+  // Function to render height options
+  const renderHeightOptions = () => {
+    let heightOptions = [];
+    for (let i = 100; i <= 250; i++) { // Heights from 100cm to 250cm
+      heightOptions.push(<Picker.Item key={i} label={`${i} cm`} value={`${i}`} />);
+    }
+    return heightOptions;
+  };
+  const heightData = Array.from({ length: 151 }, (_, i) => ({
+    key: i,
+    label: `${100 + i} cm`,
+  }));
 
   const isDetailsNotFilled = async () => {
     const detailsNotFilled = await AsyncStorage.getItem("detailsNotFilled");
@@ -192,78 +224,108 @@ const UserPreferences = () => {
         </View>
 
         <View style={styles.formGroup}>
-          <Text style={styles.label}>Date of Birth:</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter your date of birth"
-            value={formData.dob}
-            onChangeText={(text) => handleChange("dob", text)}
-          />
-        </View>
+  <Text style={styles.label}>Date of Birth:</Text>
+  <TouchableOpacity
+    style={styles.datePickerButton}
+    onPress={() => setShowDatePicker(true)}
+  >
+    <Text style={styles.datePickerText}>
+      {formData.dob instanceof Date ? formData.dob.toLocaleDateString() : 'Select a date'}
+    </Text>
+  </TouchableOpacity>
+  {showDatePicker && (
+    <View style={styles.datePickerContainer}>
+      <DateTimePicker
+        value={formData.dob instanceof Date ? formData.dob : new Date()}
+        mode="date"
+        display="default"
+        onChange={handleDateChange}
+      />
+    </View>
+  )}
+</View>
+
+
+<View style={styles.formGroup}>
+  <Text style={styles.label}>Height (in cm):</Text>
+  <ModalSelector
+    data={heightData}
+    initValue="Select Height"
+    onChange={(option) => handleChange('height', option.label)}
+  />
+  <TextInput
+    style={styles.input}
+    placeholder="Your height"
+    value={formData.height}
+    editable={false} // Make it read-only
+  />
+</View>
+
+<View style={styles.formGroup}>
+  <Text style={styles.label}>Occupation:</Text>
+  <ModalSelector
+    data={[
+      { key: 'student', label: "Student" },
+      { key: 'jobHolder', label: "Job Holder" },
+      { key: 'businessMan', label: "Business" },
+      { key: 'Teacher', label: "Teacher" },
+      { key: 'Doctor', label: "Doctor" },
+      { key: 'Engineer', label: "Engineer" },
+      { key: 'Lawyer', label: "Lawyer" },
+      { key: 'Others', label: "Others" },
+      // ... other options ...
+    ]}
+    initValue="Select Occupation"
+    onChange={(option) => handleChange("occupation", option.label)}
+  />
+  <TextInput
+    style={styles.input}
+    placeholder="Your Occupation"
+    value={formData.occupation}
+    editable={false} // Make it read-only
+  />
+</View>
+
+<View style={styles.formGroup}>
+  <Text style={styles.label}>Body Type:</Text>
+  <ModalSelector
+    data={[
+      { key: 'athletic', label: "Athletic" },
+      { key: 'obese', label: "Obese" },
+      { key: 'normal', label: "Normal" },
+      // ... other options ...
+    ]}
+    initValue="Select Body Type"
+    onChange={(option) => handleChange("bodyType", option.label)}
+  />
+  <TextInput
+    style={styles.input}
+    placeholder="Your Body Type"
+    value={formData.bodyType}
+    editable={false} // Make it read-only
+  />
+</View>
 
         <View style={styles.formGroup}>
-          <Text style={styles.label}>Height (in cm):</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter your height"
-            value={formData.height}
-            onChangeText={(text) => handleChange("height", text)}
-          />
-        </View>
+  <Text style={styles.label}>Skin Tone:</Text>
+  <ModalSelector
+    data={[
+      { key: 'dark', label: "Dark" },
+      { key: 'pale', label: "Pale" },
+      { key: 'brown', label: "Brown" },
+      // ... other options ...
+    ]}
+    initValue="Select Skin Tone"
+    onChange={(option) => handleChange("skinTone", option.label)}
+  />
+  <TextInput
+    style={styles.input}
+    placeholder="Your Skin Tone"
+    value={formData.skinTone}
+    editable={false} // Make it read-only
+  />
+</View>
 
-        <View style={styles.formGroup}>
-          <Text style={styles.label}>Occupation:</Text>
-          <ModalSelector
-            data={[
-              { key: 0, label: "Select Occupation" },
-              { key: 1, label: "Student" },
-              { key: 2, label: "Job Holder" },
-              // Add more options as needed
-            ]}
-            initValue="Select Occupation"
-            onChange={(option) => handleChange("occupation", option.label)}
-          />
-        </View>
-
-        <View style={styles.formGroup}>
-          <Text style={styles.label}>Weight (in kg):</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter your weight"
-            value={formData.weight}
-            onChangeText={(text) => handleChange("weight", text)}
-          />
-        </View>
-
-        <View style={styles.formGroup}>
-          <Text style={styles.label}>Body Type:</Text>
-          <ModalSelector
-            data={[
-              { key: 0, label: "Select Body Type" },
-              { key: 1, label: "Athletic" },
-              { key: 2, label: "Obese" },
-              { key: 3, label: "Normal" },
-              // Add more options as needed
-            ]}
-            initValue="Select Body Type"
-            onChange={(option) => handleChange("bodyType", option.label)}
-          />
-        </View>
-
-        <View style={styles.formGroup}>
-          <Text style={styles.label}>Skin Tone:</Text>
-          <ModalSelector
-            data={[
-              { key: 0, label: "Select Skin Tone" },
-              { key: 1, label: "Dark" },
-              { key: 2, label: "Pale" },
-              { key: 3, label: "Brown" },
-              // Add more options as needed
-            ]}
-            initValue="Select Skin Tone"
-            onChange={(option) => handleChange("skinTone", option.label)}
-          />
-        </View>
 
         <TouchableOpacity style={styles.button} onPress={handleSubmit}>
           <Text style={styles.buttonText}>Save Preferences</Text>
@@ -285,7 +347,9 @@ const styles = StyleSheet.create({
   heading: {
     fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 20,
+    marginBottom: 30,
+    textAlign: "center",
+    top: 20,
   },
   formGroup: {
     marginBottom: 20,
@@ -310,6 +374,9 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "white",
     fontSize: 18,
+  },
+  datePickerContainer: {
+    alignItems: 'flex-start', // Aligns DateTimePicker to the left
   },
 });
 

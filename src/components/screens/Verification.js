@@ -6,7 +6,7 @@ const Verification = ({ navigation, route }) => {
   const {userdata} = route.params;
 
   const [errormsg, setErrormsg] = useState(null);
-  const [userCode, setUserCode] = useState('XXXX');
+  const [userCode, setUserCode] = useState('');
   const [actualCode, setActualCode] = useState(null);
 
   useEffect(() => {

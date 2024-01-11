@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Image,
   ScrollView,
+  KeyboardAvoidingView,
 } from "react-native";
 
 import axios from "axios";
@@ -180,6 +181,7 @@ const NewItemDetails = ({ route ,navigation}) => {
 
   console.log("category data", selectedCategory, selectedSubCategory);
   return (
+    <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
     <ScrollView keyboardShouldPersistTaps="handled">
       <View style={styles.container}>
         <Text style={styles.title}>Item Details</Text>
@@ -318,6 +320,7 @@ const NewItemDetails = ({ route ,navigation}) => {
         </TouchableOpacity>
       </View>
     </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 

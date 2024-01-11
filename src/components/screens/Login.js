@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -10,23 +10,26 @@ import {
   KeyboardAvoidingView,
   ToastAndroid,
   Platform,
-} from "react-native";
-import logbd from "../../../assets/logbd.png";
-import { signIn } from "../../constants/endpoints";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation } from "@react-navigation/native";
-
-import { setIsAuthenticated, setUser, setDetailsNotFilled } from "../../../redux/authSlice";
-import { useDispatch, useSelector } from "react-redux";
+} from 'react-native';
+import logbd from '../../../assets/logbd.png';
+import { signIn } from '../../constants/endpoints';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
+//import info from '../screens/info';
+import {
+  setIsAuthenticated,
+  setUser,
+  setDetailsNotFilled,
+} from '../../../redux/authSlice';
+import { useDispatch } from 'react-redux';
 
 const Login = () => {
   const dispatch = useDispatch();
-
   const navigation = useNavigation();
 
   const [fdata, setFdata] = useState({
-    email: "tahoorp@gmail.com",
-    password: "1234",
+    email: 'iluvzoyi@gmail.com',
+    password: '1234',
   });
 
   const [errors, setErrors] = useState({
@@ -35,70 +38,81 @@ const Login = () => {
   });
 
   const handleSignUp = () => {
-    navigation.navigate("SignUp");
+    navigation.navigate('SignUp');
   };
 
-  const Sentobackend = () => {
+  const Sentobackend = async () => {
     const newErrors = {};
-
+  
     if (!fdata.email) {
-      newErrors.email = "Email is required";
+      newErrors.email = 'Email is required';
     }
     if (!fdata.password) {
-      newErrors.password = "Password is required";
+      newErrors.password = 'Password is required';
     }
-
+  
     setErrors(newErrors);
-
+  
     if (Object.values(newErrors).some((error) => error !== null)) {
       return;
     } else {
-      // Check if the user already has details filled
-      fetch(signIn, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(fdata),
-      })
-        .then((res) => res.json())
-        .then(async (data) => {
-          console.log(data);
-          if (data.error) {
-            if (data.error === "Password does not match") {
-              setErrors({ ...errors, password: "Incorrect Password" });
-              setErrors({ ...errors, email: null });
-            } else if (data.error === "Email Not Found") {
-              setErrors({ ...errors, email: "Email Not Found" });
-              setErrors({ ...errors, password: null });
+      try {
+        const response = await fetch(signIn, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(fdata),
+        });
+  
+        const data = await response.json();
+  
+        if (data.error === 'Email Not Found') {
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            email: 'Email Not Found',
+            password: null,
+          }));
+        } else if (data.error) {
+          if (data.error === 'Incorrect Password') {
+            setErrors((prevErrors) => ({
+              ...prevErrors,
+              password: 'Incorrect Password',
+              email: null,
+            }));
+          }
+  
+          Platform.OS === 'android' && ToastAndroid.show(data.error, ToastAndroid.SHORT);
+        } else {
+          if (data && data.user && data.token) {
+            await AsyncStorage.setItem('userToken', data.token);
+            await AsyncStorage.setItem('user', JSON.stringify(data.user));
+            dispatch(setIsAuthenticated(true));
+            dispatch(setUser(data.user));
+  
+            if (!data.detailsFilled) {
+              await AsyncStorage.setItem('detailsNotFilled', JSON.stringify(true));
+              dispatch(setDetailsNotFilled(true));
+              navigation.navigate('info');
+            } else {
+              navigation.navigate('Home');
             }
           } else {
-            // Check if the user already has details filled
-            if (data && data?.user && data?.token) {
-              await AsyncStorage.setItem("userToken", data.token);
-              await AsyncStorage.setItem("user", JSON.stringify(data.user));
-              dispatch(setIsAuthenticated(true));
-              dispatch(setUser(data?.user))
-              if (!data?.detailsFilled) {
-                await AsyncStorage.setItem("detailsNotFilled", JSON.stringify(true));
-                dispatch(setDetailsNotFilled(true));
-                navigation.navigate("info");
-              } else {
-                navigation.navigate("Home");
-              }
-            } else {
-             Platform.OS === 'android' && ToastAndroid.show("Something went wrong", ToastAndroid.SHORT);
-            }
+            Platform.OS === 'android' && ToastAndroid.show("Something went wrong", ToastAndroid.SHORT);
           }
-        });
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        Platform.OS === 'android' && ToastAndroid.show("Something went wrong", ToastAndroid.SHORT);
+      }
     }
   };
-
+  
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
       <Image style={styles.backgroundImage} source={logbd} />
       <View style={styles.overlay}>
-        <Text style={styles.head}>Login to ClothCanvas</Text>
+        <Text style={styles.head}></Text>
         <ScrollView contentContainerStyle={styles.scrollViewContent}>
           <View style={styles.formGroup}>
             <Text style={styles.label}>Email</Text>
